@@ -1,3 +1,6 @@
-ignore/
-keys.toml
 __pycache__/
+files/keys.toml/
+files/chromedriver
+files/history.db
+files/keys.toml
+ignore/
