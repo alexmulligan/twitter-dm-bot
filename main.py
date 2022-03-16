@@ -1,26 +1,29 @@
 from typing import List
 import time
+from datetime import datetime
 from util import *
 from scraper import *
 from twitter import *
 
 # TODO: Implement limit for number of DM's per hour
-# TODO: Implement logging (status/action performed, warning/error, limit reached, etc.)
 
-PAUSE_TIME = 15 # in minutes
+PAUSE_TIME = 5 # in minutes (must be at least 5, and no more than 60)
+DM_PER_HOUR_LIMIT = 100
+
+dm_counter = 0
 
 
 def poll_all_topics() -> List[str]:
     # Retrieve tweets from each topic and filter out duplicates
     records = []
     for topic in get_topics():
-        print(f"Retrieving tweets from topic: {topic}")
+        log(f"Retrieving tweets from topic: {topic}")
         for tweet in get_tweets(topic):
             if not tweet in records:
                 records.append(tweet)
     
     # Convert records into list of User ID's
-    print("Finding User IDs from Tweets.")
+    log("Finding User IDs from retrieved tweets")
     users = []
     for record in records:
         users.append(get_userid(record[0]))
@@ -30,7 +33,7 @@ def poll_all_topics() -> List[str]:
 
 def filter_through_database(user_ids: List[str], file: str=DATABASE_FILE) -> List[str]:
     # Retrieve history from database
-    print("Filtering User IDs through previously messaged user database.")
+    log("Filtering User IDs through previously messaged user database.")
     try:
         conn = sqlite3.connect(file)
         cur = conn.cursor()
@@ -38,8 +41,10 @@ def filter_through_database(user_ids: List[str], file: str=DATABASE_FILE) -> Lis
         history = cur.fetchall()
         conn.close()
     except:
-        history = []
+        log("E3: Failed filtering User IDs through database.", "ERROR")
+        sys.exit(3) # Exit code 3 - database error
 
+    # TODO: double check this
     # Compare users to history and filter
     filtered_users = []
     for user in user_ids:
@@ -49,26 +54,25 @@ def filter_through_database(user_ids: List[str], file: str=DATABASE_FILE) -> Lis
     return filtered_users
 
 
-# TODO: this did not work first try. Figure this out
-def append_to_database(user_ids: List[str], file: str=DATABASE_FILE) -> bool:
+def append_to_database(user_ids: List[str], file: str=DATABASE_FILE):
     try:
+        log("Adding new User IDs to database.")
         conn = sqlite3.connect(file)
         cur = conn.cursor()
-        cur.executemany("INSERT INTO history VALUES ?", user_ids)
+        for id in user_ids:
+            cur.execute(f"INSERT INTO history VALUES ('{id}');")
+        conn.commit()
         conn.close()
-        return True
     except:
-        return False
+        log("E3: Failed appending new User IDs to database", "ERROR")
+        sys.exit(3) # Exit code 3 - database error
 
 
 def send_all_dms(user_ids: List[str]):
     for id in user_ids:
-        try:
-            msg = get_random_message()
-            print(f"Sending direct message to: {id} - \"{msg}\"")
-            send_directmessage(id, msg)
-        except:
-            continue
+        msg = get_random_message()
+        log(f"Sending direct message to: {id} - \"{msg}\"")
+        send_directmessage(id, msg)
 
 
 def main():
@@ -80,5 +84,5 @@ def main():
 if __name__ == '__main__':
     while True:
         main()
-        print(f"Pausing for {PAUSE_TIME} minutes...\n")
+        log(f"Pausing for {PAUSE_TIME} minutes...\n")
         time.sleep(PAUSE_TIME * 60)

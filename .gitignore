@@ -1,6 +1,8 @@
 __pycache__/
 files/keys.toml/
 files/chromedriver
+files/chromedriver.exe
 files/history.db
 files/keys.toml
+files/log.txt
 ignore/
