@@ -17,6 +17,7 @@ def poll_all_topics() -> List[str]:
         for tweet in get_tweets(topic):
             if not tweet in records:
                 records.append(tweet)
+    log(f"Found {len(records)} tweets in topic {topic}")
     
     # Convert records into list of User ID's
     log("Finding User IDs from retrieved tweets")
@@ -24,6 +25,7 @@ def poll_all_topics() -> List[str]:
     for record in records:
         users.append(get_userid(record[0]))
 
+    log(f"Found {len(users)} total User IDs.")
     return users
 
 
@@ -45,6 +47,7 @@ def filter_through_database(user_ids: List[str], file: str=DATABASE_FILE) -> Lis
         if not user in history:
             filtered_users.append(user)
     
+    log(f"Found {len(filtered_users)} new User IDs.")
     return filtered_users
 
 
