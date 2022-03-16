@@ -107,7 +107,7 @@ LIMIT_DELAY_TIME = 20 # in minutes
 
 `LIMIT_DELAY_TIME` is the number of minutes the program will delay if it reaches the DM per hours limit (see previous option).
 
-- In 'util.py':
+- In `util.py`:
 
 ```
 KEYS_FILE = 'files/keys.toml'
