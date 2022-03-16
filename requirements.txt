@@ -1,0 +1,5 @@
+TwitterAPI==2.7.12
+bs4==0.0.1
+selenium==3.141.0
+toml==0.10.2
+lxml==4.8.0

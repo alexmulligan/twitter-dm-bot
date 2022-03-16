@@ -10,13 +10,14 @@ TOPICS_FILE = 'files/topics.txt'
 MESSAGES_FILE = 'files/messages.txt'
 DATABASE_FILE = 'files/history.db'
 LOG_FILE = 'files/log.txt'
+LOG_CONFIG = 1 # 0 - logfile only, 1 - logfile and console output
 
 
-def log(message: str, level: str="INFO", file: str=LOG_FILE, config: int=1): # 0 - logfile only, 1 - logfile and console output
+def log(message: str, level: str="INFO", file: str=LOG_FILE, config: int=LOG_CONFIG):
     '''Logs a message with level (INFO, WARN, ERROR) to a logfile and optionally the console'''
     log_text = f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  [{level}]: {message}'
     with open(file, 'a') as f:
-        f.write(log_text)
+        f.write(log_text + '\n')
     
     if config:
         print(log_text)
