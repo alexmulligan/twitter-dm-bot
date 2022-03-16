@@ -73,6 +73,12 @@ def initialize_database(file: str=DATABASE_FILE):
         log("E3: Database Initialization Failed", "ERROR")
         sys.exit(3) # Exit code 3 - database error
 
+
+def add_count_entry(entry: int, count: List[int]) -> List[int]:
+    new_count = count[1:len(count)]
+    new_count.append(entry)
+    return new_count
+
 if __name__ == '__main__':
     choice = input("Do you want to initialize the database? (y/n): ").strip().lower()
     if choice == 'y':

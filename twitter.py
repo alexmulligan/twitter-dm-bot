@@ -10,7 +10,7 @@ def get_userid(username: str) -> str:
     try:
         api = TwitterAPI(creds["consumer_key"], creds["consumer_secret"], auth_type='oAuth2')
         res = api.request('users/lookup', {'screen_name': username})
-        return res.json()[0]['id'] if res.status_code == 200 else None
+        return str(res.json()[0]['id']) if res.status_code == 200 else None
     except:
         log("E2: Getting UserID Failed", "ERROR")
         sys.exit(2) # Exit code 2 - twitter api/connection error
