@@ -2,6 +2,7 @@ from TwitterAPI import TwitterAPI
 import json
 from util import get_creds, log
 import sys
+from typing import Tuple
 
 
 def get_userid(username: str) -> str:
@@ -66,4 +67,18 @@ def send_directmessage(user_id: str, message_text: str) -> bool:
         return True if res.status_code == 200 else False
     except:
         log("E2: Sending Direct Message Failed", "ERROR")
+        sys.exit(2) # Exit code 2 - twitter api/connection error
+
+
+def check_for_directmessage(usr_id: str) -> Tuple(bool, int):
+    '''Checks if the user has replied and returns bool; also returns int of how many messages have been sent by bot'''
+    creds = get_creds()
+    try:
+        api = TwitterAPI(creds["consumer_key"], creds["consumer_secret"], creds["access_token"], creds["access_secret"])
+        res = api.request('direct_messages/events/list.json').json()[]
+        messages = res.json()["events"]
+        # TODO: test this and see what messages looks like. then write rest of logic
+
+    except:
+        log("E2: Checking for Direct Message Failed", "ERROR")
         sys.exit(2) # Exit code 2 - twitter api/connection error
